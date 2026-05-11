@@ -1,0 +1,51 @@
+extends Control
+
+# --- 節點引用 ---
+@onready var title_label = $CenterContainer/VBoxContainer/TitleLabel
+@onready var start_btn = $CenterContainer/VBoxContainer/StartBtn
+@onready var options_btn = $CenterContainer/VBoxContainer/OptionsBtn
+@onready var quit_btn = $CenterContainer/VBoxContainer/QuitBtn
+
+func _ready():
+	# 1. 綁定按鈕的點擊訊號
+	start_btn.pressed.connect(_on_start_pressed)
+	options_btn.pressed.connect(_on_options_pressed)
+	quit_btn.pressed.connect(_on_quit_pressed)
+	
+	# 2. 隱藏按鈕，等標題打字特效結束再顯示
+	start_btn.modulate.a = 0
+	options_btn.modulate.a = 0
+	quit_btn.modulate.a = 0
+	
+	# 3. 執行標題的打字機特效
+	_play_intro_animation()
+
+func _play_intro_animation():
+	# 儲存原本的文字並將顯示字數歸零
+	var full_text = title_label.text
+	title_label.visible_characters = 0
+	
+	# 建立動畫
+	var tween = create_tween()
+	# 標題打字效果 (花費 1.5 秒打完)
+	tween.tween_property(title_label, "visible_characters", full_text.length(), 1.5)
+	# 稍微暫停一下
+	tween.tween_interval(0.5)
+	# 讓三個按鈕浮現出來
+	tween.tween_property(start_btn, "modulate:a", 1.0, 0.3)
+	tween.tween_property(options_btn, "modulate:a", 1.0, 0.3)
+	tween.tween_property(quit_btn, "modulate:a", 1.0, 0.3)
+
+# --- 按鈕功能 ---
+
+func _on_start_pressed():
+	print(">>> 正在初始化零信任協議...")
+	get_tree().change_scene_to_file("res://intro_cinematic.tscn")
+
+func _on_options_pressed():
+	print(">>> 存取系統組態...")
+	# 預留給設定介面
+
+func _on_quit_pressed():
+	print(">>> 正在清除足跡... 中斷連線。")
+	get_tree().quit() # 關閉遊戲程式
