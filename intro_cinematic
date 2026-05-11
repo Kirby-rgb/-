@@ -1,0 +1,24 @@
+extends Control
+
+@onready var anim_player = $AnimationPlayer
+
+
+func _ready():
+	# 動畫播完後會發出訊號，我們讓它連去切換場景的函數
+	anim_player.animation_finished.connect(_on_animation_finished)
+	# 開始播放我們剛做好的動畫
+	anim_player.play("play_intro")
+
+	# (可選) 如果你想在特定時間換文字，可以用程式碼控制，或者在 AnimationPlayer 裡新增一個 Call Method 軌道。
+	# 但最簡單的方式就是像上面教的，用多個 Label 淡入淡出。
+
+func _on_animation_finished(anim_name):
+	# 動畫播完了，切換到第一章的場景！
+	print("前情提要結束，進入第一章。")
+	# 請把引號裡的路徑換成你實際的第一章場景路徑
+	get_tree().change_scene_to_file("res://email_window.tscn") 
+
+# (可選) 讓玩家按 Esc 鍵可以跳過過場動畫
+func _input(event):
+	if event.is_action_pressed("ui_cancel"): # 預設是 Esc 鍵
+		get_tree().change_scene_to_file("res://email_window.tscn")
